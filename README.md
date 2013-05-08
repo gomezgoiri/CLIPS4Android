@@ -1,4 +1,0 @@
-CLIPSonAndroid
-==============
-
-CLIPS for Android
