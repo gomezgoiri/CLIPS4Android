@@ -1,7 +1,7 @@
 CLIPSonAndroid
 ==============
 
-*CLIPSonAndroid* is a project created to use `CLIPS<http://clipsrules.sourceforge.net/>` on Android (I know, too obvious).
+*CLIPSonAndroid* is a project created to use `CLIPS<http://clipsrules.sourceforge.net/>`_ on Android (I know, too obvious).
 
 
 The project is organized as follows:
@@ -18,11 +18,11 @@ Compiling CLIPS for Android
 
 Follow the following steps to compile CLIPS for Android:
 
- 1. Install the `NDK<http://developer.android.com/tools/sdk/ndk/index.html>`
+ 1. Install the `NDK<http://developer.android.com/tools/sdk/ndk/index.html>`_
  2. Go to the *jni* folder
  3. Run *ndk-build* [*]_
 
- .. [*] Providing you have it in your *PATH*.
+ .. [*] Providing you have added it to your *PATH*.
 
 
 License
@@ -36,5 +36,5 @@ The rest of the parts of this project will be licensed also as *public domain*  
 Acknowledgements
 ----------------
 
- * The development of the *ClipsAndroid* library was possible thanks to the work done in the `CLIPSJNI project <http://clipsrules.sourceforge.net/CLIPSJNIBeta.html>`.
- * This project is supported or has been supported by the `THOFU R&D project <http://www.thofu.es/>`.
+ * The development of the *ClipsAndroid* library was possible thanks to the work done in the `CLIPSJNI project <http://clipsrules.sourceforge.net/CLIPSJNIBeta.html>`_.
+ * This project is supported or has been supported by the `THOFU R&D project <http://www.thofu.es/>`_.
