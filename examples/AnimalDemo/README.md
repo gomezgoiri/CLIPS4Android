@@ -1,0 +1,1 @@
+This Android project runs an animal identification expert system which uses ClipsAndroid as a library.
