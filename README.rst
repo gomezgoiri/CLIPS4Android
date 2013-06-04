@@ -25,6 +25,21 @@ Follow the following steps to compile CLIPS for Android:
  .. [*] Providing you have added it to your *PATH*.
 
 
+ 
+Debugging CLIPS on Android
+--------------------------
+
+CLIPS may throw *system exits*.
+As a result, the Android process using CLIPS can unexpectedly crash without giving any useful information.
+To show CLIPS' original error messages, redirect NDK's standard output to *LogCat* using the following commands:
+
+.. code-block:: bash
+
+  $ adb shell stop
+  $ adb shell setprop log.redirect-stdio true
+  $ adb shell start
+
+
 License
 -------
 
