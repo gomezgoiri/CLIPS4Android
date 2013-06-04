@@ -5,5 +5,7 @@
 
     <uses-sdk
         android:minSdkVersion="3"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="17"
+        android:debuggable="true" />
+
 </manifest>
