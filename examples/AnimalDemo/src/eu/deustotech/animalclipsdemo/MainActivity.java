@@ -59,25 +59,20 @@ public class MainActivity extends Activity {
 	}
 
 	private void initializeClips() {
-		final String sd_path = android.os.Environment.getExternalStorageDirectory().getPath();
-		
-		 try {
-
-		 this.clips = new Environment();
-		 Log.d( "clips", "1" );
-	
-		  } catch (RuntimeException e) {
-			  for(StackTraceElement t: e.getStackTrace() ) {
-				  Log.e( "clips", t.toString() );
-			  }
-		  }
-		
+		//final String sd_path = android.os.Environment.getExternalStorageDirectory().getPath();
+		this.clips = new Environment();		
 		//this.clips.load( sd_path + "/bcdemo.clp" );
-		//Log.d( "clips", "2" );
 		//this.clips.load( sd_path + "/animaldemo.clp" );
-		//Log.d( "clips", "3" );
+		// If load() method is troublesome, we can try to read the file rules in Java
+		//  and evaluate them with CLIPS' eval() method:
+		//     PrimitiveValue pv1 = clips.eval("(myFunction foo)");
+		//     pv1.retain();
+		//     PrimitiveValue pv2 = clips.eval("(myFunction bar)"); 
+		//     pv1.retain();
+		//     PrimitiveValue pv2 = clips.eval("(myFunction bar)");
+		//     ...
+		//     pv1.release();
 		//this.clips.reset();
-		//final String s = readFileAsString( sd_path + "/animaldemo.clp");
 	}
 
 	@Override
