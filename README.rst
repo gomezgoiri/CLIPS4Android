@@ -29,12 +29,10 @@ Follow the following steps to compile CLIPS for Android:
 Debugging CLIPS on Android
 --------------------------
 
-The cleanest way to show messages from a native library in Android is by simply redirecting them (see redirect-stdout_).
+The cleanest way to show messages from a native library in Android is by simply redirecting them (see `Redirecting NDK's stdout`_).
 However, this method didn't always work for me.
-That's why in #2 I forced CLIPS to show all its messages using Logcat (see logcat_).
+That's why in #2 I forced CLIPS to show all its messages using Logcat (see `Logcat from native code`_).
 
-
-.. _redirect-stdout:
 
 Redirecting NDK's stdout
 ************************
@@ -49,8 +47,6 @@ To show CLIPS' original error messages, redirect NDK's standard output to *LogCa
   $ adb shell setprop log.redirect-stdio true
   $ adb shell start
 
-
-.. _logcat:
 
 Logcat from native code
 ***********************
