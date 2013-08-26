@@ -8,8 +8,9 @@ FILE_LIST := $(wildcard $(LOCAL_PATH)/clips/*.c)
 LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%)
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/clips
 LOCAL_EXPORT_CFLAGS := -g -O3 -pipe -pedantic -std=gnu99 -fno-strict-aliasing -DIO_FUNCTIONS=0
+# http://stackoverflow.com/questions/5313536/whats-the-difference-between-gnu99-and-c99-clang
 LOCAL_EXPORT_LDFLAGS = -lm
-#LOCAL_EXPORT_LDLIBS := -llog
+LOCAL_EXPORT_LDLIBS := -llog
 #include $(BUILD_STATIC_LIBRARY)
 include $(BUILD_SHARED_LIBRARY)
 
