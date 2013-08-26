@@ -29,8 +29,8 @@ Follow the following steps to compile CLIPS for Android:
 Debugging CLIPS on Android
 --------------------------
 
-The cleanest way to show messages from a native library in Android is by simply redirecting them (see `Redirecting stdout`_).
-However, this method didn't always work for me.
+The cleanest way to show messages from a native library in Android is by simply redirecting its output (see `Redirecting stdout`_).
+However, this method has not always work for me (sorry, I don't know the cause).
 That's why in #2 I forced CLIPS to show all its messages using Logcat (see `Logcat from native code`_).
 
 
