@@ -51,6 +51,8 @@
 #include "utility.h"
 
 #include "envrnmnt.h"
+#include "logcat.h"
+
 
 #define SIZE_ENVIRONMENT_HASH  131
 
@@ -97,7 +99,7 @@ globle intBool AllocateEnvironmentData(
    
    if (size <= 0)
      {
-      printf("\n[ENVRNMNT1] Environment data position %d allocated with size of 0 or less.\n",position);      
+      aprintf("\n[ENVRNMNT1] Environment data position %d allocated with size of 0 or less.\n",position);      
       return(FALSE);
      }
      
@@ -107,7 +109,7 @@ globle intBool AllocateEnvironmentData(
    
    if (position >= MAXIMUM_ENVIRONMENT_POSITIONS)
      {
-      printf("\n[ENVRNMNT2] Environment data position %d exceeds the maximum allowed.\n",position);      
+      aprintf("\n[ENVRNMNT2] Environment data position %d exceeds the maximum allowed.\n",position);      
       return(FALSE);
      }
      
@@ -117,7 +119,7 @@ globle intBool AllocateEnvironmentData(
    
    if (theEnvironment->theData[position] != NULL)
      {
-      printf("\n[ENVRNMNT3] Environment data position %d already allocated.\n",position);      
+      aprintf("\n[ENVRNMNT3] Environment data position %d already allocated.\n",position);      
       return(FALSE);
      }
      
@@ -128,7 +130,7 @@ globle intBool AllocateEnvironmentData(
    theEnvironment->theData[position] = malloc(size);
    if (theEnvironment->theData[position] == NULL)
      {
-      printf("\n[ENVRNMNT4] Environment data position %d could not be allocated.\n",position);      
+      aprintf("\n[ENVRNMNT4] Environment data position %d could not be allocated.\n",position);      
       return(FALSE);
      }
    
@@ -198,7 +200,7 @@ static void InitializeEnvironmentHashTable()
 
    if (EnvironmentHashTable == NULL)
      {
-      printf("\n[ENVRNMNT4] Unable to initialize environment hash table.\n");      
+      aprintf("\n[ENVRNMNT4] Unable to initialize environment hash table.\n");      
       return;
      }
 
@@ -324,7 +326,7 @@ globle void *CreateEnvironmentDriver(
   
    if (theEnvironment == NULL)
      {
-      printf("\n[ENVRNMNT5] Unable to create new environment.\n");
+      aprintf("\n[ENVRNMNT5] Unable to create new environment.\n");
       return(NULL);
      }
 
@@ -333,7 +335,7 @@ globle void *CreateEnvironmentDriver(
    if (theData == NULL)
      {
       free(theEnvironment);
-      printf("\n[ENVRNMNT6] Unable to create environment data.\n");
+      aprintf("\n[ENVRNMNT6] Unable to create environment data.\n");
       return(NULL);
      }
 
@@ -363,7 +365,7 @@ globle void *CreateEnvironmentDriver(
      {
       free(theEnvironment->theData);
       free(theEnvironment);
-      printf("\n[ENVRNMNT7] Unable to create environment data.\n");
+      aprintf("\n[ENVRNMNT7] Unable to create environment data.\n");
       return(NULL);
      }
 
@@ -602,9 +604,9 @@ globle intBool DestroyEnvironment(
      
    if ((theMemData->MemoryAmount != 0) || (theMemData->MemoryCalls != 0))
      {
-      printf("\n[ENVRNMNT8] Environment data not fully deallocated.\n"); 
-      printf("\n[ENVRNMNT8] MemoryAmount = %ld.\n",(long) theMemData->MemoryAmount); 
-      printf("\n[ENVRNMNT8] MemoryCalls = %ld.\n",(long) theMemData->MemoryCalls); 
+      aprintf("\n[ENVRNMNT8] Environment data not fully deallocated.\n"); 
+      aprintf("\n[ENVRNMNT8] MemoryAmount = %ld.\n",(long) theMemData->MemoryAmount); 
+      aprintf("\n[ENVRNMNT8] MemoryCalls = %ld.\n",(long) theMemData->MemoryCalls); 
       rv = FALSE;     
      }
      
