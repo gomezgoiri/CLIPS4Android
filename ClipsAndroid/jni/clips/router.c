@@ -48,6 +48,7 @@
 #include "sysdep.h"
 
 #include "router.h"
+#include "logcat.h"
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -120,7 +121,7 @@ globle int EnvPrintRouter(
    /* Search through the list of routers until one */
    /* is found that will handle the print request. */
    /*==============================================*/
-
+   
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
@@ -128,11 +129,23 @@ globle int EnvPrintRouter(
         {
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
          if (currentPtr->environmentAware)
-           { (*currentPtr->printer)(theEnv,logicalName,str); }
+           {
+	     // This will use stdio
+	     //(*currentPtr->printer)(theEnv,logicalName,str);
+	     // Unfortunately, I don't know why it cannot be redirected to logcat always (using "adb shell setprop log.redirect-stdio true")
+	     
+	     // As a solution, this should be configured with the Routers.
+	     // But let's be honest: I don't know how to do it and I want it done.
+	     // So, here you have a temporary patch:
+	     aprintf(str);
+	   }
          else            
-           { ((int (*)(char *,char *)) (*currentPtr->printer))(logicalName,str); }
-         
-         return(1);
+           {
+	     // Same here
+	     //((int (*)(char *,char *)) (*currentPtr->printer))(logicalName,str);
+	     aprintf(str);
+	   }
+	 return(1);
         }
       currentPtr = currentPtr->next;
      }
@@ -140,7 +153,7 @@ globle int EnvPrintRouter(
    /*=====================================================*/
    /* The logical name was not recognized by any routers. */
    /*=====================================================*/
-
+   
    if (strcmp(WERROR,logicalName) != 0) UnrecognizedRouterMessage(theEnv,logicalName);
    return(0);
   }
