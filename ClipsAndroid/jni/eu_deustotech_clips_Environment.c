@@ -1,7 +1,6 @@
-
 #include "eu_deustotech_clips_Environment.h"
-
 #include "clips.h"
+#include "logcat.h"
 
 #define CLIPSJNI_DATA 67
 
@@ -282,6 +281,7 @@ JNIEXPORT jlong JNICALL Java_eu_deustotech_clips_Environment_createEnvironment(
   JNIEnv *env, 
   jobject obj)
   {
+    
    void *theEnv;
    jclass theClassClass; 
    jmethodID theClassGetCanonicalNameMethod;
@@ -322,6 +322,7 @@ JNIEXPORT jlong JNICALL Java_eu_deustotech_clips_Environment_createEnvironment(
    theMultifieldValueClass = (*env)->FindClass(env,"eu/deustotech/clips/MultifieldValue");
    theFactAddressValueClass = (*env)->FindClass(env,"eu/deustotech/clips/FactAddressValue");
    theInstanceAddressValueClass = (*env)->FindClass(env,"eu/deustotech/clips/InstanceAddressValue");
+   
                 
    /*=========================================*/
    /* If the Java classes could not be found, */
@@ -413,7 +414,8 @@ JNIEXPORT jlong JNICALL Java_eu_deustotech_clips_Environment_createEnvironment(
    CLIPSJNIData(theEnv)->integerValueInitMethod = theIntegerValueInitMethod;
    CLIPSJNIData(theEnv)->floatValueClass = (*env)->NewGlobalRef(env,theFloatValueClass);
    CLIPSJNIData(theEnv)->floatValueInitMethod = theFloatValueInitMethod;
-      
+   
+   
    CLIPSJNIData(theEnv)->symbolValueClass = (*env)->NewGlobalRef(env,theSymbolValueClass);
    CLIPSJNIData(theEnv)->symbolValueInitMethod = theSymbolValueInitMethod;
    CLIPSJNIData(theEnv)->stringValueClass = (*env)->NewGlobalRef(env,theStringValueClass);
@@ -1700,12 +1702,12 @@ static void NewJavaAddress(
            {
             if (strcmp(cStr,"long") == 0)
               { 
-               printf("p[%d] = %s\n",(int) p,cStr);
+               aprintf("p[%d] = %s\n",(int) p,cStr);
                javaArgs[p].j = DOToLong(newArgs[p]);
               }
             else if (strcmp(cStr,"int") == 0)  
               { 
-               printf("p[%d] = %s\n",(int) p,cStr);
+               aprintf("p[%d] = %s\n",(int) p,cStr);
                javaArgs[p].i = DOToLong(newArgs[p]);
               }
             else
@@ -1966,18 +1968,18 @@ static intBool CallJavaMethod(
 
             cStr = (char *) (*env)->GetStringUTFChars(env,str,NULL);
              
-            printf("p[%d] = %s\n",(int) p,cStr);
+            aprintf("p[%d] = %s\n",(int) p,cStr);
             
             if (GetType(newArgs[p]) == INTEGER)
               {
                if (strcmp(cStr,"long") == 0)
                  { 
-                  /* printf("p[%d] = %s\n",(int) p,cStr); */
+                  /* aprintf("p[%d] = %s\n",(int) p,cStr); */
                   javaArgs[p].j = DOToLong(newArgs[p]);
                  }
                else if (strcmp(cStr,"int") == 0)  
                  { 
-                  /* printf("p[%d] = %s\n",(int) p,cStr); */
+                  /* aprintf("p[%d] = %s\n",(int) p,cStr); */
                   javaArgs[p].i = DOToLong(newArgs[p]);
                  }
                else
@@ -2017,7 +2019,7 @@ static intBool DiscardJavaAddress(
   {
    JNIEnv *env;
 
-   printf("Discarding Java Address %p\n",theValue);
+   aprintf("Discarding Java Address %p\n",theValue);
    
    if (theValue != NULL)
      {
