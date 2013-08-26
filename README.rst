@@ -53,7 +53,7 @@ Logcat from native code
 
 Sometimes the previous property does not work (I don't know why yet).
 Since `messages can be directly logged on Logcat <http://stackoverflow.com/questions/10274920/how-to-get-printf-messgaes-written-in-ndk-application/10275209#10275209>`_, 
-we replaced the printf's with these *Logcat*'s logs in the `ìssue 2 <https://github.com/gomezgoiri/CLIPSonAndroid/issues/2>`_ .
+we replaced the printf's with these *Logcat*'s logs in the `issue 2 <https://github.com/gomezgoiri/CLIPSonAndroid/issues/2>`_ .
 
 To that end, we have done an `utility macro <https://github.com/gomezgoiri/CLIPSonAndroid/blob/master/ClipsAndroid/jni/clips/logcat.h>`_.
 Common usage:
