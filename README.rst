@@ -48,7 +48,7 @@ Sometimes the previous property does not work (I don't know why yet).
 Since `messages can be directly logged on Logcat <http://stackoverflow.com/questions/10274920/how-to-get-printf-messgaes-written-in-ndk-application/10275209#10275209>`_, 
 we will gradually replace the printf's with these *Logcat*'s logs.
 
-To that end, we have done an `utility macro <https://github.com/gomezgoiri/CLIPSonAndroid/commit/73bc8b907bd8dd2d78277978d63b8d59124c5d5>`_.
+To that end, we have done an `utility macro <https://github.com/gomezgoiri/CLIPSonAndroid/blob/master/ClipsAndroid/jni/clips/logcat.h>`_.
 Common usage:
 
 .. code-block:: c
@@ -57,7 +57,7 @@ Common usage:
   
   ...
   
-  LOGCAT("This is an standard message\n");
+  aprintf("This is an standard message\n");
 
 
 License
