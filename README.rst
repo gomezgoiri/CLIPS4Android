@@ -31,7 +31,7 @@ Debugging CLIPS on Android
 
 The cleanest way to show messages from a native library in Android is by simply redirecting its output (see `Redirecting stdout`_).
 However, this method has not always work for me (sorry, I don't know the cause).
-That's why in #2 I forced CLIPS to show all its messages using Logcat (see `Logcat from native code`_).
+That's why I forced CLIPS to show all its messages using Logcat (see `Logcat from native code`_).
 
 
 Redirecting stdout
@@ -53,7 +53,7 @@ Logcat from native code
 
 Sometimes the previous property does not work (I don't know why yet).
 Since `messages can be directly logged on Logcat <http://stackoverflow.com/questions/10274920/how-to-get-printf-messgaes-written-in-ndk-application/10275209#10275209>`_, 
-we will gradually replace the printf's with these *Logcat*'s logs.
+we replaced the printf's with these *Logcat*'s logs in the `ìssue 2 <https://github.com/gomezgoiri/CLIPSonAndroid/issues/2>`_ .
 
 To that end, we have done an `utility macro <https://github.com/gomezgoiri/CLIPSonAndroid/blob/master/ClipsAndroid/jni/clips/logcat.h>`_.
 Common usage:
