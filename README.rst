@@ -35,7 +35,7 @@ That's why in #2 I forced CLIPS to show all its messages using Logcat (see `Logc
 
 
 Redirecting stdout
-************************
+******************
 
 CLIPS may throw *system exits*.
 As a result, the Android process using CLIPS can unexpectedly crash without giving any useful information.
