@@ -111,7 +111,9 @@ globle void IOFunctionDefinitions(
 
 #if IO_FUNCTIONS
    IOFunctionData(theEnv)->useFullCRLF = FALSE;
-   IOFunctionData(theEnv)->locale = (SYMBOL_HN *) EnvAddSymbol(theEnv,setlocale(LC_ALL,NULL));
+   //IOFunctionData(theEnv)->locale = (SYMBOL_HN *) EnvAddSymbol(theEnv,setlocale(LC_ALL,NULL));
+   // Quick fix for #1
+   IOFunctionData(theEnv)->locale = (SYMBOL_HN *) EnvAddSymbol(theEnv,"en_US.UTF-8");
    IncrementSymbolCount(IOFunctionData(theEnv)->locale);
 #endif
 
