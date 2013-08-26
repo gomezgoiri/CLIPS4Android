@@ -6,11 +6,11 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import eu.deustotech.clips.Environment;
+import eu.deustotech.clips.Router;
 
 public class MainActivity extends Activity {
 	
@@ -60,7 +60,8 @@ public class MainActivity extends Activity {
 
 	private void initializeClips() {
 		//final String sd_path = android.os.Environment.getExternalStorageDirectory().getPath();
-		this.clips = new Environment();		
+		this.clips = new Environment();
+		this.clips.eval("(printout t \"Hola mundo!\" )");
 		//this.clips.load( sd_path + "/bcdemo.clp" );
 		//this.clips.load( sd_path + "/animaldemo.clp" );
 		// If load() method is troublesome, we can try to read the file rules in Java
@@ -72,7 +73,7 @@ public class MainActivity extends Activity {
 		//     PrimitiveValue pv2 = clips.eval("(myFunction bar)");
 		//     ...
 		//     pv1.release();
-		//this.clips.reset();
+		this.clips.reset();
 	}
 
 	@Override
