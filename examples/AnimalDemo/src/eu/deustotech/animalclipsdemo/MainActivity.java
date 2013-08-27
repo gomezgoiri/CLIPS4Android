@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
 		//final String sd_path = android.os.Environment.getExternalStorageDirectory().getPath();
 		this.clips = new Environment();
 		this.clips.eval("(printout t \"Hola mundo!\" )");
+		this.clips.eval("(printout t (+ 3 4))");
 		//this.clips.load( sd_path + "/bcdemo.clp" );
 		//this.clips.load( sd_path + "/animaldemo.clp" );
 		// If load() method is troublesome, we can try to read the file rules in Java

@@ -16,6 +16,12 @@ public class MainActivity extends Activity {
 		//Log.d("clips", Environment.getCLIPSVersion());
 		final TextView lbl = (TextView) findViewById(R.id.label);
 		lbl.setText( "CLIPS version: " + Environment.getCLIPSVersion() );
+		
+		// And now, basic usage...
+		Environment clips = new Environment();
+		clips.eval("(printout t \"Hello CLIPS environment!\" )");
+		clips.eval("(printout t (+ 3 4))");
+		clips.destroy();
 	}
 
 	@Override
