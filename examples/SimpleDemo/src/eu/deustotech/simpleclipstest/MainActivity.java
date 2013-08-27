@@ -12,14 +12,13 @@ import eu.deustotech.clips.Environment;
 
 public class MainActivity extends Activity {
 	
-	private String getRealFilepath(String filepath) throws FileNotFoundException {
+	private String getRealFilePath(String filepath) throws FileNotFoundException {
 		final String state = android.os.Environment.getExternalStorageState();
 		if( android.os.Environment.MEDIA_MOUNTED.equals(state) ) {
 			// get the directory of the triple store
 			final File topDir = android.os.Environment.getExternalStorageDirectory();
 			final String realpath = topDir.getAbsolutePath() + filepath;
 			final File file = new File(realpath);
-			Log.d("blah", realpath);
 			if( !file.exists() )
 				throw new FileNotFoundException("The file doesn't exist in the external storage.");
 			return realpath;
@@ -45,7 +44,7 @@ public class MainActivity extends Activity {
 		// Checking that the rule file exists
 		String factsFilePath;
 		try {
-			factsFilePath = getRealFilepath( "/files/sample.clp" );
+			factsFilePath = getRealFilePath( "/files/sample.clp" );
 			
 			// And now, a little more complex usage...
 			final CLIPSTest test = new CLIPSTest(factsFilePath);

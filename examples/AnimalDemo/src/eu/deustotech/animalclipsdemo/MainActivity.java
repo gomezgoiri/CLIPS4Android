@@ -2,6 +2,7 @@ package eu.deustotech.animalclipsdemo;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import android.app.Activity;
@@ -9,21 +10,46 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import eu.deustotech.clips.Environment;
-import eu.deustotech.clips.Router;
 
 public class MainActivity extends Activity {
 	
 	Environment clips;
+	String expertSystemRulesFile;
+	String animalsDemoFile;
+	
+	private String getRealFilePath(String filepath) throws FileNotFoundException {
+		final String state = android.os.Environment.getExternalStorageState();
+		if( android.os.Environment.MEDIA_MOUNTED.equals(state) ) {
+			// get the directory of the triple store
+			final File topDir = android.os.Environment.getExternalStorageDirectory();
+			final String realpath = topDir.getAbsolutePath() + filepath;
+			final File file = new File(realpath);
+			if( !file.exists() )
+				throw new FileNotFoundException("The file " + realpath + " doesn't exist in the external storage.");
+			return realpath;
+		}
+		throw new FileNotFoundException("The external storage is not mounted.");
+	}	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		Log.d("clips", Environment.getCLIPSVersion());
-		
-		//initializeClips();
+				
+		//Log.d("clips", Environment.getCLIPSVersion());
+		try {
+			expertSystemRulesFile = getRealFilePath( "/files/bcdemo.clp" );
+			animalsDemoFile = getRealFilePath( "/files/bcdemo.clp" );
+		} catch (FileNotFoundException e) {
+			final Button btnNext = (Button) findViewById(R.id.btnNext);
+			btnNext.setEnabled( false );
+			
+			final TextView lblMsg = (TextView) findViewById(R.id.label);
+			lblMsg.setText( e.getMessage() );
+		}
 	}
 	
     public static String readFileAsString(String filePath) {
