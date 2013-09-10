@@ -10,7 +10,10 @@ ClipsAndroid
   It is an Android library which is intended to be used by other Android applications. To compile the eclipse project, it is necessary to compile CLIPS for Android first (see `Compiling CLIPS for Android`_.).
 
 Examples
-  It contains different Android applications which use *ClipsAndroid*.
+  It contains different Android applications which use *ClipsAndroid*:
+  * `*Simple demo* <http://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SimpleDemo>`_ performs basic operations
+  * `*Animal demo* <https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/AnimalDemo>`_ is an expert system to identify animals
+  * `*Semantic reasoning demo* <https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SemanticReasoningClipsDemo>`_ infers new semantic content (RDF triples)
 
 
 Compiling CLIPS for Android
