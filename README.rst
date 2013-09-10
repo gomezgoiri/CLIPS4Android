@@ -1,7 +1,7 @@
-CLIPSonAndroid
+CLIPS4Android
 ==============
 
-*CLIPSonAndroid* is a project created to use `CLIPS <http://clipsrules.sourceforge.net/>`_ on Android (I know, too obvious).
+*CLIPS4Android* is a project created to adapt `CLIPS <http://clipsrules.sourceforge.net/>`_ to Android (I know, too obvious).
 
 
 The project is organized as follows:
