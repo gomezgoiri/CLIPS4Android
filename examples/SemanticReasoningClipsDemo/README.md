@@ -6,4 +6,4 @@ This Android application reasons over semantic content.
  1. It saves all the inferred triples in a file.
  
  
-This sample application uses a parser and a serializer to an CLIPS-based format which can be [found here](https://github.com/gomezgoiri/rio-clp).
+This application uses a parser and a serializer for/to a CLIPS-based format which can be [found here](https://github.com/gomezgoiri/rio-clp).
