@@ -11,9 +11,10 @@ ClipsAndroid
 
 Examples
   It contains different Android applications which use *ClipsAndroid*:
-  * `*Simple demo* <http://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SimpleDemo>`_ performs basic operations
-  * `*Animal demo* <https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/AnimalDemo>`_ is an expert system to identify animals
-  * `*Semantic reasoning demo* <https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SemanticReasoningClipsDemo>`_ infers new semantic content (RDF triples)
+  
+  * `Simple demo <http://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SimpleDemo>`_ performs basic operations
+  * `Animal demo <https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/AnimalDemo>`_ is an expert system to identify animals
+  * `Semantic reasoning demo <https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SemanticReasoningClipsDemo>`_ infers new semantic content (RDF triples)
 
 
 Compiling CLIPS for Android
