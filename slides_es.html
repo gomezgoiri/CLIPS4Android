@@ -37,6 +37,22 @@
         bottom: 3em;
         right: 3em;
       }
+      
+      /* Two-column layout */
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+      .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+      }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 2em;
+      }
     </style>
   </head>
   <body>
@@ -48,40 +64,212 @@ class: center, middle
 
 ---
 
-# Agenda
-
-1. Introduction
-2. Deep-dive
-3. ...
-
----
-
 # Objetivo
 
-Disponer de un razonador en móviles.
+Disponer de un motor de reglas para [dispositivos Android](http://www.android.com/) para poder
+
+ 1. Separar de la lógica de cada aplicación la definición de hechos y reglas propias de cada dominio.
+ 1. Inferir nuevos hechos en base a las reglas y los hechos iniciales.
+ 
+Concretamente, en [THOFU](http://www.thofu.es/) se perseguía usar dicho motor para razonar sobre [conocimiento semántico](http://www.w3.org/standards/semanticweb/) ([RDFS](http://www.w3.org/TR/2002/WD-rdf-mt-20020429/) y [OWL2](http://www.w3.org/TR/owl2-profiles/#OWL_2_RL)).
 
 ---
 
-# Datos de entrada que requiere
+# Uso básico de CLIPS desde Android
 
-XXX
+[La librería para Android desarrollada](https://github.com/gomezgoiri/CLIPS4Android/tree/master/ClipsAndroid) ejerce de intermediaria entre la applicación de Android y la [librería nativa de CLIPS](http://clipsrules.sourceforge.net/WhatIsCLIPS.html) creada y mantenida desde 1985.  
+
+<br />
+
+El manejo de CLIPS desde Android se realiza a través de un objeto de la clase _Environment_.
+```java
+clips = new Environment();
+```
+
+<br />
+
+Para desencadenar el __proceso de inferencia__, basta con ejecutar el método _run()_:
+```java
+clips.run();
+```
+
+<br />
+
+Finalmente, tras el uso del objeto _Environment_ es necesario __eliminar las estructuras de memoria__ creadas en [C](http://en.wikipedia.org/wiki/C_(programming_language)) haciendo una llamada a _destroy()_:
+```java
+clips.destroy();
+```
 
 ---
 
-# Datos de salida que produce
+# ¿Qué datos de entrada requiere?
 
-XXX
+.left-column[
+  ## Uso básico
+]
+.right-column[
+CLIPS se nutre de hechos y reglas definidos siguiendo su [propia sintaxis](http://clipsrules.sourceforge.net/documentation/v630/bpg.pdf).
+
+En la librería de Android creada se pueden cargar hechos y reglas de distintos modos.
+
+ 1. Mediante asertos.
+    ```java
+clips.assertString("(person (name Sandra) (age 28))")
+    ```
+    
+ 1. Directamente cargandolos directamente desde un fichero.
+    ```java
+clips.load(filepath);
+    ```
+]
 
 ---
 
-# Activo experimental desarrollado
+# ¿Qué datos de entrada requiere?
+
+.left-column[
+  ## Uso básico
+  ## Razonamiento semántico
+]
+.right-column[
+Para poder razonar en base a los estándares de la web semántica basta con
+
+ 1. Cargar las reglas que permiten razonar en [RDFS](https://github.com/gomezgoiri/rio-clp/blob/master/files/rdfs.clp) y [OWL2](https://github.com/gomezgoiri/rio-clp/blob/master/files/owl.clp).
+ 
+ Para ello se han codificado las mismas de acuerdo a la sintaxis usada por CLIPS.
+ Dichas reglas están disponibles en [sendos ficheros](https://github.com/gomezgoiri/rio-clp/tree/master/files) que pueden ser cargados con el método _load_.
+ 
+ 1. Cargar la ontología y la base del conocimiento en CLIPS.
+ 
+ Para ello, hemos creado [un _parser_ y un _serializer_](https://github.com/gomezgoiri/rio-clp) a la sintaxis usada por CLIPS y los ficheros de reglas RDFS y OWL2.
+ 
+ Estos están hechos siguiendo las interfaces de [Sesame RIO](http://www.openrdf.org/doc/sesame2/2.7.0-beta1/users/ch09.html).
+ De esta forma, se pueden usar en conjunción con los [_parsers_ y _serializers_](https://bitbucket.org/openrdf/sesame/src) de otros formatos semánticos
+ (p.e. [Turtle](http://www.w3.org/2007/02/turtle/primer/), [N-Triples](http://www.w3.org/TR/rdf-testcases/#ntriples) o [RDF/XML](http://www.w3.org/TR/REC-rdf-syntax/)).
+ 
+ Así, se podría cargar un fichero en formato Turtle parseandolo, serializandolo a CLIPS y cargandolo con _load_. 
+]
+
+---
+
+# ¿Qué datos de entrada requiere?
+
+.left-column[
+  ## Uso básico
+  ## Razonamiento semántico
+]
+.right-column[
+Ejemplo de conversión de RDF/XML a CLIPS:
+
+```java
+final RDFFormat sourceFormat = RDFFormat.RDFXML;
+final RDFFormat destinationFormat = CLPFormat.CLP;
+
+final ByteArrayOutputStream out = new ByteArrayOutputStream();
+final RDFWriter writer = RDFWriterRegistry.getInstance()
+                               .get(destinationFormat).getWriter(out);
+
+final RDFParser parser = RDFParserRegistry.getInstance()
+                               .get(sourceFormat).getParser();
+parser.setRDFHandler(writer);
+
+final InputStream in =  source.openStream();
+parser.parse( in, "unknown:namespace" );
+
+out.flush();
+in.close();
+
+return out.toString();
+```
+]
+
+---
+
+# ¿Qué datos de salida produce?
+
+.left-column[
+  ## Uso básico
+]
+.right-column[
+Aparte de _Environment_ La librería de CLIPS para Android tiene dos clases principales:
+
+ * _FactAddressValue_
+ * _PrimitiveValue_. Nótese que otras clases extienden esta clase.
+
+__Ejemplo__ de consulta:
+```java
+final String evalStr = "(find-all-facts (( ?f person )) TRUE)";
+final PrimitiveValue evaluated = clips.eval( evalStr );
+
+for (int i=0; i < evaluated.size(); i++) {
+	final PrimitiveValue person = evaluated.get(i);
+	showPerson( person );
+}
+```
+]
+
+---
+
+# ¿Qué datos de salida produce?
+
+.left-column[
+  ## Uso básico
+  ## Razonamiento semántico
+]
+.right-column[
+El conocimiento de CLIPS con las tripletas inferidas se puede __exportar__ al formato de tripletas anteriormente mencionado.
+
+
+Con ellas, se puede __convertir a un formato semántico estándar__ usando el serializador de [Sesame RIO](http://www.openrdf.org/) deseado.
+]
+
+---
+
+# ¿Qué datos de salida produce?
+
+.left-column[
+  ## Uso básico
+  ## Razonamiento semántico
+]
+.right-column[
+__Ejemplo__ de extracción de conocimiento de CLIPS ([ver más](https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SemanticReasoningClipsDemo)):
+
+```java
+// El contenido exportado a nuestro formato se guardará aquí
+final StringBuilder sb = new StringBuilder();
+
+final String evalStr = "(find-all-facts ((?f .)) TRUE)";
+final PrimitiveValue pv = this.clips.eval(evalStr);
+
+for(int i=0; i< pv.size(); i++) {
+  final PrimitiveValue pv2 = pv.get(i);
+  final PrimitiveValue triple = pv2.getFactSlot(null);
+  boolean retain = true;
+  
+  if( rf!=null ) {
+    for( ResultsFilter f: rf) {
+      if( !f.isRetained(triple) ) {
+	retain = false;
+	break;
+      }
+    }
+  }
+  
+  if( retain )
+    sb.append( serializeToCLP(triple) );
+}
+```
+]
+
+---
+# Activos experimentales desarrollados
 
  * [Librería CLIPS para Android](https://github.com/gomezgoiri/CLIPS4Android)
  * [Parser/serializer de RDF en formato apto para CLIPS](https://github.com/gomezgoiri/rio-clp)
 
 ---
 
-# Herramientas utilizadas en su desarrollo
+# Herramientas utilizadas en el desarrollo
 
  * [Eclipse](http://www.eclipse.org/) + [ADT](http://developer.android.com/tools/sdk/eclipse-adt.html)
  * [Android SDK](http://developer.android.com/sdk/index.html)
@@ -91,7 +279,7 @@ XXX
 
 # Escenarios de uso
 
- * [Aplicación de uso básico](https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SimpleDemo)
+ * [Aplicación de demostración de uso básico de CLIPS](https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SimpleDemo)
  * [Aplicación de sistema experto de reconocimiento de animales](https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/AnimalDemo)
  * [Aplicación en la que se razona sobre conocimiento semántico](https://github.com/gomezgoiri/CLIPS4Android/tree/master/examples/SemanticReasoningClipsDemo)
 
