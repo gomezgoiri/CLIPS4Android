@@ -7,8 +7,8 @@ import eu.deustotech.clips.PrimitiveValue;
 
 
 /*
- * This example was taken from: 
- * 		https://bitbucket.org/ErunamoJAZZ/trash-it/src
+ * This class is based on an introductory example on how to use CLIPSJNI made by C. Daniel Sánchez Ramírez.
+ *   https://bitbucket.org/ErunamoJAZZ/trash-it/src/94282935833e4271065787ba75d02a7ce6ff9b24/docs/Como%20Utilizar%20CPLISJNI.pdf?at=default
  */
 public class CLIPSTest {
 	
