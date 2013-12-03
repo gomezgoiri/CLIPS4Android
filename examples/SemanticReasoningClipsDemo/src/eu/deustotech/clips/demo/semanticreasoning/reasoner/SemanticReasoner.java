@@ -61,8 +61,10 @@ public class SemanticReasoner {
 		return new String(os.toByteArray());
 	}
 	
-	private String getKnowledgeBaseSerialized(ResultsFilter[] rf) {
-		final StringBuilder sb = new StringBuilder();
+	private ByteArrayOutputStream getKnowledgeBaseSerialized(ResultsFilter[] rf) {
+		/*final StringBuilder sb = new StringBuilder();*/
+		final ByteArrayOutputStream os = new ByteArrayOutputStream();
+		final PrintStream ps = new PrintStream(os);
 		this.clips.run();
 		
 		final String evalStr = "(find-all-facts ((?f .)) TRUE)";
@@ -92,15 +94,16 @@ public class SemanticReasoner {
 				}
 				
 				if( retain )
-					sb.append( serializeToCLP(triple) );
+					//sb.append( serializeToCLP(triple) );
+					ps.format("(. %s %s %s )\n", triple.get(0), triple.get(1), triple.get(2) );
 			}
 		} catch (Exception e) {
 			Log.e(SemanticReasoner.logLabel, e.getMessage());
 		}
-		return sb.toString();
+		return os; //sb.toString();
 	}
 	
-	public String getKnowledgeBaseSerialized() {
+	public ByteArrayOutputStream getKnowledgeBaseSerialized() {
 		return getKnowledgeBaseSerialized(
 				new ResultsFilter[] {
 						new IncorrectSubjectFilter(),
@@ -108,7 +111,7 @@ public class SemanticReasoner {
 				});
 	}
 	
-	public String getBySubject(String subj) {
+	public ByteArrayOutputStream getBySubject(String subj) {
 		try {
 			return getKnowledgeBaseSerialized(
 							new ResultsFilter[] {
