@@ -1,10 +1,9 @@
 package eu.deustotech.clips.demo.semanticreasoning;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +30,25 @@ import eu.deustotech.clips.demo.semanticreasoning.util.SemanticWriter;
 
 public class MainActivity extends Activity {
 	
-	static {
+	public static String logLabel = "SemanticReasoningDemo";
+	private static String subpath = "/files";
+	private SemanticReasoner reasoner = null;
+	// To ensure that just a Thread uses the reasoner at a time:
+	// (JIC, I'm not sure whether Environment and the underlying code is thread safe or not)
+	private ExecutorService executor = Executors.newSingleThreadExecutor();
+	
+	// Measure times
+	final private boolean logTimeMeasures = true; // Change this in development time to avoid time logs 
+	private Timer globalTimer = null;
+	
+	public MainActivity() {
+		super();
+		init();
+	}
+	
+	// This is a workaround for the ServiceLoader
+	// FIXME use the http://developer.android.com/reference/java/util/ServiceLoader.html
+	private void init() {
 		RDFWriterRegistry.getInstance().add( new CLPWriterFactory() );
 		RDFParserRegistry.getInstance().add( new CLPParserFactory() );
 		RDFWriterRegistry.getInstance().add( new TurtleWriterFactory() );
@@ -40,32 +57,31 @@ public class MainActivity extends Activity {
 		RDFParserRegistry.getInstance().add( new RDFXMLParserFactory() );
 	}
 	
-	private static String logLabel = "SemanticReasoningDemo";
-	private SemanticReasoner reasoner = null;
-	// To ensure that just a Thread uses the reasoner at a time:
-	// (JIC, I'm not sure whether Environment and the underlying code is thread safe or not)
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
-
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		this.globalTimer = new Timer("All the process");
 		initializeReasoner();
 		loadSemanticContent();
 		inferAndWrite();
 	}
 	
-	private String getRealFilePath(String filepath) throws FileNotFoundException {
+	private String getRealFilePathAndCheck(String filename) throws FileNotFoundException {
+		final String realpath = getRealFilePath(filename);
+		final File file = new File(realpath);
+			if( !file.exists() )
+				throw new FileNotFoundException("The file " + realpath + " doesn't exist in the external storage.");
+		return realpath;
+	}
+	
+	private String getRealFilePath(String filename) throws FileNotFoundException {
 		final String state = android.os.Environment.getExternalStorageState();
 		if( android.os.Environment.MEDIA_MOUNTED.equals(state) ) {
 			// get the directory of the triple store
 			final File topDir = android.os.Environment.getExternalStorageDirectory();
-			final String realpath = topDir.getAbsolutePath() + filepath;
-			final File file = new File(realpath);
-			if( !file.exists() )
-				throw new FileNotFoundException("The file " + realpath + " doesn't exist in the external storage.");
+			final String realpath = topDir.getAbsolutePath() + MainActivity.subpath + "/" + filename;
 			return realpath;
 		}
 		throw new FileNotFoundException("The external storage is not mounted.");
@@ -76,11 +92,13 @@ public class MainActivity extends Activity {
 			@Override
 			public void run() {
 				try {
-					final String rdfsRulesFile = getRealFilePath( "/files/owl.clp" );
-					final String owlsRulesFile = getRealFilePath( "/files/rdfs.clp" );
+					final String rdfsRulesFile = getRealFilePathAndCheck( "owl.clp" );
+					final String owlsRulesFile = getRealFilePathAndCheck( "rdfs.clp" );
 					
+					final Timer t = new Timer("Loading CLP files");
 					reasoner = new SemanticReasoner( rdfsRulesFile, owlsRulesFile );
-					reasoner.start();			
+					reasoner.start();
+					t.end(logTimeMeasures);
 				} catch (FileNotFoundException e) {
 					Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 				}
@@ -98,9 +116,14 @@ public class MainActivity extends Activity {
 					try {
 						// http://www.w3.org/TR/owl-guide/wine.rdf only works with the browser, not really sure why
 						final URL su = new URL( "http://krono.act.uji.es/Links/ontologies/wine.owl/at_download/file" );
+						final Timer t = new Timer("Loading wine ont");
 						final String wine = SemanticLoader.readURL( su );
+						t.end(logTimeMeasures);
+						
+						final Timer t2 = new Timer("Assertions");
 						reasoner.assertKnowledge( wine );
 						reasoner.assertKnowledge( getSampleIndividuals() );
+						t2.end(logTimeMeasures);
 						
 						/*// Former sample:
 						this.reasoner.assertKnowledge("(. mm:Dog rdfs:subClassOf mm:Animal)");
@@ -126,13 +149,19 @@ public class MainActivity extends Activity {
 				} else {
 					try {
 						//final String blah = this.reasoner.getBySubject("<http://sample.com/foo#larioja>");
-						final String kb = reasoner.getKnowledgeBaseSerialized();
+						final Timer t = new Timer("Reasoning and getting serialization");
+						final ByteArrayOutputStream kb = reasoner.getKnowledgeBaseSerialized();
+						t.end(logTimeMeasures);
 						
 						Log.d(MainActivity.logLabel,  "Started writing...");
-						final OutputStream os = new FileOutputStream( android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/out.n3" );
-						SemanticWriter.write( kb, os, RDFFormat.TURTLE );
+						final Timer t2 = new Timer("Writing file");
+						SemanticWriter.writeFile( new ByteArrayInputStream(kb.toByteArray()), getRealFilePath("out.n3"), RDFFormat.TURTLE );
 						//SemanticWriter.writeAnything( kb, os );
+						t2.end(logTimeMeasures);
+						
 						Log.d(MainActivity.logLabel,  "Finished writing...");
+						
+						globalTimer.end(logTimeMeasures);
 						
 						runOnUiThread(
 							new Runnable() {
@@ -173,5 +202,27 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+}
 
+class Timer {
+	static String LABEL = "MEASUREMENTS";
+	
+	final String logMsg;
+	long startTime;
+	long endTime;
+	
+	public Timer(String logMsg) {
+		start();
+		this.logMsg = logMsg;
+	}
+	
+	private void start() {
+		this.startTime = System.currentTimeMillis();
+	}
+	
+	protected void end(boolean andLog) {
+		this.endTime = System.currentTimeMillis();
+		if (andLog)
+			Log.d(Timer.LABEL, this.logMsg + ": " + (this.endTime - this.startTime));
+	}
 }
