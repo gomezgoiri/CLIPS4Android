@@ -4,6 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +35,7 @@ import eu.deustotech.clips.demo.semanticreasoning.util.SemanticWriter;
 public class MainActivity extends Activity {
 	
 	public static String logLabel = "SemanticReasoningDemo";
-	private static String subpath = "/files";
+	private static String appRootDirectory = "/files";
 	private SemanticReasoner reasoner = null;
 	// To ensure that just a Thread uses the reasoner at a time:
 	// (JIC, I'm not sure whether Environment and the underlying code is thread safe or not)
@@ -68,23 +72,64 @@ public class MainActivity extends Activity {
 		inferAndWrite();
 	}
 	
-	private String getRealFilePathAndCheck(String filename) throws FileNotFoundException {
-		final String realpath = getRealFilePath(filename);
-		final File file = new File(realpath);
-			if( !file.exists() )
-				throw new FileNotFoundException("The file " + realpath + " doesn't exist in the external storage.");
-		return realpath;
-	}
-	
-	private String getRealFilePath(String filename) throws FileNotFoundException {
+	private void createRootDirectoryIfDoesNotExist() throws IOException {
 		final String state = android.os.Environment.getExternalStorageState();
 		if( android.os.Environment.MEDIA_MOUNTED.equals(state) ) {
 			// get the directory of the triple store
 			final File topDir = android.os.Environment.getExternalStorageDirectory();
-			final String realpath = topDir.getAbsolutePath() + MainActivity.subpath + "/" + filename;
+			final String realpath = topDir.getAbsolutePath() + MainActivity.appRootDirectory;
+			final File file = new File(realpath);
+			if( !file.exists() ) {
+				file.mkdirs(); // it creates parent folders too
+			}
+		} else throw new IOException("The external storage is not mounted.");
+	}
+	
+	private String getRealFilePath(String filename) throws IOException {
+		final String state = android.os.Environment.getExternalStorageState();
+		if( android.os.Environment.MEDIA_MOUNTED.equals(state) ) {
+			// get the directory of the triple store
+			final File topDir = android.os.Environment.getExternalStorageDirectory();
+			final String realpath = topDir.getAbsolutePath() + MainActivity.appRootDirectory + "/" + filename;
 			return realpath;
 		}
-		throw new FileNotFoundException("The external storage is not mounted.");
+		throw new IOException("The external storage is not mounted.");
+	}
+	
+	private String getRealFilePathCreatingIfDoesNotExist(String filename) throws IOException {
+		final String realpath = getRealFilePath(filename);
+		
+		final File file = new File(realpath);
+		if( !file.exists() ) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				throw new FileNotFoundException("The unexisting file '" + realpath + "' could not be created");
+			}
+			
+			InputStream input;
+			try {
+				input = getResources().getAssets().open(filename);
+			} catch (IOException e) {
+				throw new FileNotFoundException("That's weird, the file '" + filename + "' is not available as an asset.");
+			}
+			
+			final OutputStream output = new FileOutputStream(file);
+			
+			try {
+				final byte[] buffer = new byte[1024]; // Adjust if you want
+			    int bytesRead;
+			    while ((bytesRead = input.read(buffer)) != -1) {
+			        output.write(buffer, 0, bytesRead);
+			    }
+			} catch (IOException e) {
+				throw new IOException("Not able to write the file '" + realpath + "'.");
+			} finally {
+				output.close();
+			}
+		}
+		// At this point, if it didn't exist, it does now
+		return realpath;
 	}
 	
 	private void initializeReasoner() {		
@@ -92,14 +137,15 @@ public class MainActivity extends Activity {
 			@Override
 			public void run() {
 				try {
-					final String rdfsRulesFile = getRealFilePathAndCheck( "owl.clp" );
-					final String owlsRulesFile = getRealFilePathAndCheck( "rdfs.clp" );
+					createRootDirectoryIfDoesNotExist();
+					final String rdfsRulesFile = getRealFilePathCreatingIfDoesNotExist( "owl.clp" );
+					final String owlsRulesFile = getRealFilePathCreatingIfDoesNotExist( "rdfs.clp" );
 					
 					final Timer t = new Timer("Loading CLP files");
 					reasoner = new SemanticReasoner( rdfsRulesFile, owlsRulesFile );
 					reasoner.start();
 					t.end(logTimeMeasures);
-				} catch (FileNotFoundException e) {
+				} catch (IOException e) {
 					Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -155,6 +201,13 @@ public class MainActivity extends Activity {
 						
 						Log.d(MainActivity.logLabel,  "Started writing...");
 						final Timer t2 = new Timer("Writing file");
+						
+						// http://source.android.com/devices/tech/storage/#multi-user-external-storage
+						// Warning:
+						//   Starting in Android 4.2, devices can support multiple users.
+						//   As a consequence, you won't see any file if you mount the external storage folder.
+						//   However, you must be able to check and get it using DDMS's file explorer.
+						//   In my case, the folder was located under /mnt/shell/emulated/0
 						SemanticWriter.writeFile( new ByteArrayInputStream(kb.toByteArray()), getRealFilePath("out.n3"), RDFFormat.TURTLE );
 						//SemanticWriter.writeAnything( kb, os );
 						t2.end(logTimeMeasures);
