@@ -1,9 +1,12 @@
 package eu.deustotech.simpleclipstest;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,19 +15,7 @@ import eu.deustotech.clips.Environment;
 
 public class MainActivity extends Activity {
 	
-	private String getRealFilePath(String filepath) throws FileNotFoundException {
-		final String state = android.os.Environment.getExternalStorageState();
-		if( android.os.Environment.MEDIA_MOUNTED.equals(state) ) {
-			// get the directory of the triple store
-			final File topDir = android.os.Environment.getExternalStorageDirectory();
-			final String realpath = topDir.getAbsolutePath() + filepath;
-			final File file = new File(realpath);
-			if( !file.exists() )
-				throw new FileNotFoundException("The file doesn't exist in the external storage.");
-			return realpath;
-		}
-		throw new FileNotFoundException("The external storage is not mounted.");
-	}
+	private static final String FILE_NAME = "sample.clp";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +32,11 @@ public class MainActivity extends Activity {
 		clips.eval("(printout t (+ 3 4))");
 		clips.destroy();
 		
+		generateRuleFileInAppFileDir();
 		// Checking that the rule file exists
 		String factsFilePath;
 		try {
-			factsFilePath = getRealFilePath( "/files/sample.clp" );
+			factsFilePath = getFilesDir().getAbsolutePath() + "/" + FILE_NAME;
 			
 			// And now, a little more complex usage...
 			final CLIPSTest test = new CLIPSTest(factsFilePath);
@@ -61,6 +53,34 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	private void generateRuleFileInAppFileDir()
+	{
+		FileOutputStream destinationFileStream = null;
+		InputStream assetsOriginFileStream = null;
+		try{
+			destinationFileStream = openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
+			assetsOriginFileStream = getAssets().open(FILE_NAME);
+			
+			int aByte;
+			while((aByte = assetsOriginFileStream.read())!=-1){
+				destinationFileStream.write(aByte);
+			}			
+		}
+		catch (IOException e){
+			Log.d(CLIPSTest.tag, e.getMessage());
+		}
+		finally{
+			try
+			{
+				assetsOriginFileStream.close();
+				destinationFileStream.close();
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}			
+		}		
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
