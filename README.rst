@@ -82,5 +82,7 @@ The rest of the parts of this project will be licensed also as *public domain*  
 Acknowledgements
 ----------------
 
- * The development of the *ClipsAndroid* library was possible thanks to the work done in the `CLIPSJNI project <http://clipsrules.sourceforge.net/CLIPSJNIBeta.html>`_.
- * This project is supported or has been supported by the `THOFU R&D project <http://www.thofu.es/>`_.
+The development of the *ClipsAndroid* library was possible thanks to the work done in the `CLIPSJNI project <http://clipsrules.sourceforge.net/CLIPSJNIBeta.html>`_.
+
+Besides, this project is supported or has been supported by the `THOFU R&D project <http://www.thofu.es/>`_ (project grant CEN-20101019).
+THOFU was funded by the Spanish Centro para el Desarrollo Tecnológico Industrial (CDTI) and supported by the Spanish Ministerio de Economía y Competitividad.
