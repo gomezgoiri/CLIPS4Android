@@ -1,5 +1,13 @@
 package eu.deustotech.clips;
 
+/**
+ * <p>A fact is a list of atomic values that are either referenced positionally (ordered facts) or by name (non‑ordered or template facts).
+ * Facts are referred to by index or address.
+ * This class represents the latter reference.
+ * </p>
+ * 
+ * <p>The printed format of a fact‑address is: <Fact-XXX>.</p>
+ */
 public class FactAddressValue extends PrimitiveValue
   {
    private Environment owner;

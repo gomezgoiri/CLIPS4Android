@@ -51,6 +51,7 @@
 #include "sysdep.h"
 
 #include "prntutil.h"
+#include "exceptions.h"
 
 /*****************************************************/
 /* InitializePrintUtilityData: Allocates environment */
@@ -238,6 +239,7 @@ globle void PrintErrorID(
    EnvPrintRouter(theEnv,WERROR,module);
    PrintLongInteger(theEnv,WERROR,(long int) errorID);
    EnvPrintRouter(theEnv,WERROR,"] ");
+   throwCLIPSError(theEnv,module,errorID,"");
   }
 
 /**********************************************/
