@@ -1,6 +1,7 @@
 package eu.deustotech.simpleclipstest;
 
 import android.util.Log;
+import eu.deustotech.clips.CLIPSError;
 import eu.deustotech.clips.Environment;
 import eu.deustotech.clips.FactAddressValue;
 import eu.deustotech.clips.PrimitiveValue;
@@ -15,15 +16,15 @@ public class CLIPSTest {
 	public static final String tag = "CLIPSAgeTest";
 	private final Environment clips;
 	
-	public CLIPSTest( String filepath ) {
+	public CLIPSTest( String filepath ) throws CLIPSError {
 		this.clips = new Environment();
-		clips.load(filepath);
+		this.clips.load(filepath);
 		Log.d(CLIPSTest.tag, "Loading .clp...\n\n");
-		clips.reset();
+		this.clips.reset();
 	}
 	
 	public void stop() {
-		clips.destroy();
+		this.clips.destroy();
 	}
 	
 	private void showPerson(PrimitiveValue personFact) throws Exception {
@@ -37,7 +38,7 @@ public class CLIPSTest {
 	 * @throws Exception 
 	 */
 	public void assertExample() throws Exception {
-		final FactAddressValue Sandra = clips.assertString("(person (name Sandra) (age 28))");
+		final FactAddressValue Sandra = this.clips.assertString("(person (name Sandra) (age 28))");
 		showPerson( Sandra );
 	}
 	
@@ -47,7 +48,7 @@ public class CLIPSTest {
 	 */
 	public void getAllFacts() throws Exception {
 		final String evalStr = "(find-all-facts (( ?f person )) TRUE)";
-		final PrimitiveValue evaluated = clips.eval( evalStr );
+		final PrimitiveValue evaluated = this.clips.eval( evalStr );
 		showPeople( evaluated );
 	}
 	
@@ -56,8 +57,8 @@ public class CLIPSTest {
 	 * @throws Exception 
 	 */
 	public void modifyAFact() throws Exception {
-		clips.assertString("(birthday Ana)");
-		clips.run();
+		this.clips.assertString("(birthday Ana)");
+		this.clips.run();
 	}
 	
 	private void showPeople(PrimitiveValue evaluated) throws Exception{

@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import android.util.Log;
-
 import eu.deustotech.animalclipsdemo.states.FinalState;
 import eu.deustotech.animalclipsdemo.states.InitialState;
 import eu.deustotech.animalclipsdemo.states.NextStateListener;
 import eu.deustotech.animalclipsdemo.states.UsualState;
 import eu.deustotech.animalclipsdemo.states.StateChoice;
+import eu.deustotech.clips.CLIPSError;
 import eu.deustotech.clips.Environment;
 import eu.deustotech.clips.PrimitiveValue;
 
@@ -41,8 +41,13 @@ public class ExpertSystem {
 	public void start() {
 		for(String fileToLoad: this.filesToLoad) {
 			Log.d( ExpertSystem.logLabel, "Loading rule file '" + fileToLoad + "'... " );
-			this.clips.load(fileToLoad);
-			Log.d( ExpertSystem.logLabel, "Loaded" );
+			try {
+				this.clips.load(fileToLoad);
+				Log.d( ExpertSystem.logLabel, "Loaded" );
+			} catch (CLIPSError e) {
+				Log.e( ExpertSystem.logLabel, "The file could not be loaded.", e );
+			}
+			
 		}
 		this.clips.reset();
 	}

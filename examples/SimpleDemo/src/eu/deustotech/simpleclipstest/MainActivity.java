@@ -11,7 +11,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
+import eu.deustotech.clips.CLIPSError;
 import eu.deustotech.clips.Environment;
+import eu.deustotech.clips.IntegerValue;
+import eu.deustotech.clips.PrimitiveValue;
 
 public class MainActivity extends Activity {
 	
@@ -28,8 +31,9 @@ public class MainActivity extends Activity {
 		
 		// And now, basic usage...
 		Environment clips = new Environment();
-		clips.eval("(printout t \"Hello CLIPS environment!\" )");
-		clips.eval("(printout t (+ 3 4))");
+		checkPrint(clips);
+		checkEval(clips);
+		checkThrow(clips);
 		clips.destroy();
 		
 		generateRuleFileInAppFileDir();
@@ -52,9 +56,40 @@ public class MainActivity extends Activity {
 			Log.d(CLIPSTest.tag, e.getMessage());
 		}
 	}
+	
+	private void checkPrint(Environment env) {
+		final TextView lbl = (TextView) findViewById(R.id.lblPrintResult);
+		try {
+			env.eval("(printout t \"Hello CLIPS environment!\" )"); // Helloword for Logcat
+			lbl.setText( "✓" );
+		} catch( CLIPSError e ) {
+			lbl.setText( "x" );
+		}
+	}
+	
+	private void checkEval(Environment env) {
+		final TextView lbl = (TextView) findViewById(R.id.lblEvalResult);
+		try {
+			final PrimitiveValue result = env.eval( "(+ 3 4)" );
+			lbl.setText( (new IntegerValue(7).equals(result))? "✓": "x" );
+		} catch( CLIPSError e ) {
+			lbl.setText( "x" );
+		}
+	}
+	
+	private void checkThrow(Environment env) {
+		final TextView lbl = (TextView) findViewById(R.id.lblThrowResult);
+		try {
+			// Incorrect syntax
+			env.build( "(defrule foo (a) ==> (assert (b)))" );
+			lbl.setText("x");
+		} catch(CLIPSError e) {
+			// If CLIPS has thrown the incorrect syntax error, then everything goes as expected.
+			lbl.setText( (e.getCode()==2 && e.getModule().equals("PRNTUTIL"))? "✓": "x" );
+		}
+	}
 
-	private void generateRuleFileInAppFileDir()
-	{
+	private void generateRuleFileInAppFileDir() {
 		FileOutputStream destinationFileStream = null;
 		InputStream assetsOriginFileStream = null;
 		try{

@@ -2,7 +2,9 @@ package eu.deustotech.clips.demo.semanticreasoning.reasoner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
 import android.util.Log;
+import eu.deustotech.clips.CLIPSError;
 import eu.deustotech.clips.Environment;
 import eu.deustotech.clips.PrimitiveValue;
 
@@ -33,8 +35,12 @@ public class SemanticReasoner {
 	public void start() {
 		for(String fileToLoad: this.rulesFilePaths) {
 			Log.d( SemanticReasoner.logLabel, "Loading rule file '" + fileToLoad + "'... " );
-			this.clips.load(fileToLoad);
-			Log.d( SemanticReasoner.logLabel, "Loaded" );
+			try {
+				this.clips.load(fileToLoad);
+				Log.d( SemanticReasoner.logLabel, "Loaded" );
+			} catch (CLIPSError e) {
+				Log.e( SemanticReasoner.logLabel, "The file could not be loaded.", e );
+			}
 		}
 		this.clips.reset();
 	}
@@ -50,7 +56,11 @@ public class SemanticReasoner {
 		for( String line: lines ) { 
 			// It is also helpful to identify whether any of them has an incorrect syntax.
 			//Log.d(SemanticReasoner.logLabel, "Asserting: " + line);
-			this.clips.assertString(line);
+			try {
+				this.clips.assertString(line);
+			} catch (CLIPSError e) {
+				Log.e( SemanticReasoner.logLabel, "The string could not be asserted.", e );
+			}
 		}
 	}
 	
@@ -68,12 +78,13 @@ public class SemanticReasoner {
 		this.clips.run();
 		
 		final String evalStr = "(find-all-facts ((?f .)) TRUE)";
-		final PrimitiveValue pv = this.clips.eval(evalStr);
-		//final String evalStr = "(find-all-facts ((?f .)) TRUE)";
-		//Log.d(SemanticReasoner.logLabel, pv.getValue().toString());
-		
-		//final PrimitiveValue pvx = this.clips.eval("(facts)");
 		try {
+			final PrimitiveValue pv = this.clips.eval(evalStr);
+			//final String evalStr = "(find-all-facts ((?f .)) TRUE)";
+			//Log.d(SemanticReasoner.logLabel, pv.getValue().toString());
+			
+			//final PrimitiveValue pvx = this.clips.eval("(facts)");
+			
 			//Log.d(SemanticReasoner.logLabel, pvx.getValue().toString());
 			for(int i=0; i< pv.size(); i++) {
 				final PrimitiveValue pv2 = pv.get(i);
@@ -97,6 +108,8 @@ public class SemanticReasoner {
 					//sb.append( serializeToCLP(triple) );
 					ps.format("(. %s %s %s )\n", triple.get(0), triple.get(1), triple.get(2) );
 			}
+		} catch (CLIPSError e) {
+			Log.e(SemanticReasoner.logLabel, "find-all-facts incorrectly evaluated.", e);
 		} catch (Exception e) {
 			Log.e(SemanticReasoner.logLabel, e.getMessage());
 		}
