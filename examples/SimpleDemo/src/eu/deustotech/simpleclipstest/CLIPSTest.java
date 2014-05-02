@@ -4,8 +4,8 @@ import android.util.Log;
 import eu.deustotech.clips.CLIPSError;
 import eu.deustotech.clips.Environment;
 import eu.deustotech.clips.FactAddressValue;
-import eu.deustotech.clips.PrimitiveValue;
-
+import eu.deustotech.clips.IntegerValue;
+import eu.deustotech.clips.MultifieldValue;
 
 /*
  * This class is based on an introductory example on how to use CLIPSJNI made by C. Daniel Sánchez Ramírez.
@@ -27,43 +27,43 @@ public class CLIPSTest {
 		this.clips.destroy();
 	}
 	
-	private void showPerson(PrimitiveValue personFact) throws Exception {
+	private void showPerson(FactAddressValue personFact) {
 		final String name = personFact.getFactSlot("name").toString();
-		final int age = personFact.getFactSlot("age").intValue();
+		final int age =((IntegerValue) personFact.getFactSlot("age")).intValue();
 		Log.d(CLIPSTest.tag, name + " is "+ age + " old.");
 	}
 	
 	/** 
 	 * Example of how to use "assert".
-	 * @throws Exception 
+	 * @throws CLIPSError
 	 */
-	public void assertExample() throws Exception {
+	public void assertExample() throws CLIPSError {
 		final FactAddressValue Sandra = this.clips.assertString("(person (name Sandra) (age 28))");
 		showPerson( Sandra );
 	}
 	
 	/**
 	 * Example of how to get data using "eval".
-	 * @throws Exception 
+	 * @throws CLIPSError 
 	 */
-	public void getAllFacts() throws Exception {
+	public void getAllFacts() throws CLIPSError {
 		final String evalStr = "(find-all-facts (( ?f person )) TRUE)";
-		final PrimitiveValue evaluated = this.clips.eval( evalStr );
+		final MultifieldValue evaluated = (MultifieldValue) this.clips.eval( evalStr );
 		showPeople( evaluated );
 	}
 	
 	/**
 	 * Changing a fact using a rule defined in the original file.
-	 * @throws Exception 
+	 * @throws CLIPSError
 	 */
-	public void modifyAFact() throws Exception {
+	public void modifyAFact() throws CLIPSError {
 		this.clips.assertString("(birthday Ana)");
 		this.clips.run();
 	}
 	
-	private void showPeople(PrimitiveValue evaluated) throws Exception{
+	private void showPeople(MultifieldValue evaluated) {
 		for (int i=0; i < evaluated.size(); i++) {
-			final PrimitiveValue person = evaluated.get(i);
+			final FactAddressValue person = (FactAddressValue) evaluated.get(i);
 			showPerson( person );
 		}
 	}

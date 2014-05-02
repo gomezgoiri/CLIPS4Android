@@ -35,7 +35,8 @@ public class Environment {
 	}
 
 	/**
-	 * @return CLIPSJNI's version number.
+	 * @return
+	 * 	CLIPSJNI's version number.
 	 */
 	public static String getCLIPSJNIVersion() {
 		return CLIPSJNI_VERSION;
@@ -47,7 +48,8 @@ public class Environment {
 	public static native String getCLIPSVersion();
 
 	/**
-	 * @return String representation of CLIPSJNI's and CLIPS' version numbers.
+	 * @return
+	 * 	String representation of CLIPSJNI's and CLIPS' version numbers.
 	 */
 	public static String getVersion() {
 		return "CLIPSJNI version " + getCLIPSJNIVersion() + " (CLIPS version "
@@ -74,14 +76,10 @@ public class Environment {
 	/**
 	 * Clears the CLIPS environment.
 	 * 
-	 * Removes all constructs and all associated data structures (such as facts
-	 * and instances) from the CLIPS environment. A clear may be performed
-	 * safely at any time, however, certain constructs will not allow themselves
-	 * to be deleted while they are in use. For example, while deffacts are
-	 * being reset (by the reset command), it is not possible to remove them
-	 * using the clear command. Note that the clear command does not effect many
-	 * environment characteristics (such as the current conflict resolution
-	 * strategy).
+	 * Removes all constructs and all associated data structures (such as facts and instances) from the CLIPS environment.
+	 * A clear may be performed safely at any time, however, certain constructs will not allow themselves to be deleted while they are in use.
+	 * For example, while deffacts are being reset (by the reset command), it is not possible to remove them using the clear command.
+	 * Note that the clear command does not effect many environment characteristics (such as the current conflict resolution strategy).
 	 */
 	public void clear() {
 		clear(theEnvironment);
@@ -93,8 +91,10 @@ public class Environment {
 	private native void reset(long env);
 
 	/**
-	 * Reset: 1. remove all activated rules from agenda 2. remove all facts from
-	 * the fact-list 3. assert the facts from existing deffacts
+	 * Reset:
+	 * 	1. remove all activated rules from agenda
+	 *  2. remove all facts from the fact-list
+	 *  3. assert the facts from existing deffacts
 	 */
 	public void reset() {
 		reset(theEnvironment);
@@ -225,7 +225,7 @@ public class Environment {
 	/**
 	 * The build function evaluates the string as though it were entered at the command prompt.
 	 * @param buildStr
-	 * 		The construct to be added.
+	 * 		The construct to be added. That is, defrule, deffacts, etc.
 	 * @return
 	 * 		True if the construct was added (or false if an error occurs).
 	 * @throws CLIPSError
@@ -251,7 +251,7 @@ public class Environment {
 	 * 
 	 * @throws CLIPSError
 	 * 		CLIPS throws an error when it detects any problem.
-	 * 		For example, it warns when factStr's syntax is incorrect.
+	 * 		For example, it warns when factStr syntax is incorrect.
 	 */
 	public FactAddressValue assertString(String factStr) throws CLIPSError {
 		return assertString(theEnvironment, factStr);
@@ -539,9 +539,9 @@ public class Environment {
 				theInstance.getInstanceAddress());
 	}
 
-	/************/
-	/* destroy: */
-	/************/
+	/**
+	 * This will deallocate all memory associated with that environment.
+	 */
 	public void destroy() {
 		destroyEnvironment(theEnvironment);
 	}

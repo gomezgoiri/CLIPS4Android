@@ -11,7 +11,10 @@ import eu.deustotech.animalclipsdemo.states.UsualState;
 import eu.deustotech.animalclipsdemo.states.StateChoice;
 import eu.deustotech.clips.CLIPSError;
 import eu.deustotech.clips.Environment;
+import eu.deustotech.clips.FactAddressValue;
+import eu.deustotech.clips.MultifieldValue;
 import eu.deustotech.clips.PrimitiveValue;
+import eu.deustotech.clips.SymbolValue;
 
 /* Original source code:
  * http://sourceforge.net/projects/clipsrules/files/CLIPS/6.30/
@@ -56,12 +59,12 @@ public class ExpertSystem {
 		this.clips.destroy();
 	}
 	
-	protected void restart() throws Exception {
+	protected void restart() throws CLIPSError {
 		this.clips.reset();
 		nextState();
 	}
 	
-	protected void next(String selection) throws Exception {
+	protected void next(String selection) throws CLIPSError {
 		String assertion = "(next (id " + getCurrentStateId() + ")";
 		if( selection == null ) {
 			assertion += " (value-set FALSE))";
@@ -72,26 +75,31 @@ public class ExpertSystem {
 		nextState();
 	}
 	
-	protected void previous() throws Exception {
+	protected void previous() throws CLIPSError {
 		this.clips.assertString( "(prev (id " + getCurrentStateId() + "))" );
 		nextState();
 	}
 	
-	private String getCurrentStateId() throws Exception {
+	private FactAddressValue getFirstFact(String evalStr) throws CLIPSError {
+		final MultifieldValue result = (MultifieldValue) this.clips.eval(evalStr);
+		return (FactAddressValue) result.get(0);
+	}
+	
+	private String getCurrentStateId() throws CLIPSError {
 		final String evalStr = "(find-all-facts ((?f state-list)) TRUE)";
-		return this.clips.eval(evalStr).get(0).getFactSlot("current").toString();
+		return getFirstFact(evalStr).getFactSlot("current").toString();
 	}
 	
-	private PrimitiveValue getCurrentState() throws Exception {
+	private FactAddressValue getCurrentState() throws CLIPSError {
 		final String evalStr =  "(find-all-facts ((?f UI-state)) " + "(eq ?f:id " + getCurrentStateId() + "))";
-		return clips.eval(evalStr).get(0);
+		return getFirstFact(evalStr);
 	}
 	
-	private Set<StateChoice> getChoices(PrimitiveValue currentState) throws Exception {
+	private Set<StateChoice> getChoices(FactAddressValue currentState) {
 		final Set<StateChoice> choices = new HashSet<StateChoice>();
 		
-		final PrimitiveValue validAnswers = currentState.getFactSlot("valid-answers");
-		final PrimitiveValue displayAnswers = currentState.getFactSlot("display-answers");
+		final MultifieldValue validAnswers = (MultifieldValue) currentState.getFactSlot("valid-answers");
+		final MultifieldValue displayAnswers = (MultifieldValue) currentState.getFactSlot("display-answers");
 		final String selected = currentState.getFactSlot("response").toString();
 
 		for (int i = 0, j = 0; (i < validAnswers.size()) && (j < displayAnswers.size()); i++, j++) {
@@ -106,14 +114,14 @@ public class ExpertSystem {
 		return choices;
 	}
 	
-	private String getText(PrimitiveValue currentState) throws Exception {
-		return currentState.getFactSlot("display").symbolValue();
+	private String getText(FactAddressValue currentState) {
+		return ((SymbolValue) currentState.getFactSlot("display")).symbolValue();
 	}
 	
-	private void nextState() throws Exception {
+	private void nextState() throws CLIPSError {
 		this.clips.run(); // Important! 
 		
-		final PrimitiveValue currentState = getCurrentState();
+		final FactAddressValue currentState = getCurrentState();
 		final String stateName = currentState.getFactSlot("state").toString();
 		
 		if( stateName.equals("final") ) {

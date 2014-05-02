@@ -1,166 +1,37 @@
 package eu.deustotech.clips;
 
-import java.util.List;
 
-public abstract class PrimitiveValue
-  {
-   private Object theValue;
-   
-   /*******************/
-   /* PrimitiveValue: */
-   /*******************/
-   protected PrimitiveValue(
-     Object value)
-     {
-      theValue = value;
-     }
-
-   /*************/
-   /* getValue: */
-   /*************/
-   public Object getValue()
-     {
-      return theValue;
-     }
-
-   /****************/
-   /* numberValue: */
-   /****************/
-   public Number numberValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type NUMBER.");
-     }
-
-   /*************/
-   /* intValue: */
-   /*************/
-   public int intValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type INTEGER.");
-     }
-
-   /**************/
-   /* longValue: */
-   /**************/
-   public long longValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type INTEGER.");
-     }
-     
-   /***************/
-   /* floatValue: */
-   /***************/
-   public float floatValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type FLOAT.");
-     }
-
-   /****************/
-   /* doubleValue: */
-   /****************/
-   public double doubleValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type FLOAT.");
-     }
-
-   /****************/
-   /* lexemeValue: */
-   /****************/
-   public String lexemeValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type LEXEME.");
-     }
-     
-   /****************/
-   /* symbolValue: */
-   /****************/
-   public String symbolValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type SYMBOL.");
-     }
-
-   /****************/
-   /* stringValue: */
-   /****************/
-   public String stringValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type STRING.");
-     }
-
-   /**********************/
-   /* instanceNameValue: */
-   /**********************/
-   public String instanceNameValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not type INSTANCE NAME.");
-     }
-
-   /********************/
-   /* multifieldValue: */
-   /********************/
-   public List multifieldValue() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not multifield type.");
-     }
-
-   /********************/
-   /* get: */
-   /********************/
-   public PrimitiveValue get(
-     int index) throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not multifield type.");
-     }
-
-   /********************/
-   /* size: */
-   /********************/
-   public int size() throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not multifield type.");
-     }
-
-   /****************/
-   /* getFactSlot: */
-   /****************/     
-   public PrimitiveValue getFactSlot(
-     String slotName) throws Exception
-     {
-      throw new Exception("PrimitiveValue " + this + " is not fact address type.");
-     }
-
-   /************/
-   /* retain: */
-   /************/
-   public void retain()
-     {
-      //System.out.println("PrimitiveValue retain");
-     }
-
-   /************/
-   /* release: */
-   /************/
-   public void release()
-     {
-      //System.out.println("PrimitiveValue release");
-     }
-     
-   /*************/
-   /* toString: */
-   /*************/
-   public String toString()
-     {
-      if (theValue != null)
-        { return theValue.toString(); }
-        
-      return "";
-     }
+public abstract class PrimitiveValue {
+	private Object theValue;
+	
+	protected PrimitiveValue(Object value) {
+		// TODO Would it be a good idea to previously check the parameters in Java (in each constructor)?
+		// This way, we could avoid a bunch of CLIPS errors...
+		this.theValue = value;
+	}
+	
+	/**
+	 * @return
+	 * 		Java instance of a CLIPS' value.
+	 * 		This value is an instance of any of CLIPS' primitive types and
+	 * 		is represented in an equivalent Java class.
+	 */
+	public Object getValue() {
+		return this.theValue;
+	}
+	
+	@Override
+	public String toString() {
+		if (this.theValue== null) return "";
+		return theValue.toString();
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((theValue == null) ? 0 : theValue.hashCode());
+		result = prime * result
+				+ ((this.theValue == null) ? 0 : this.theValue.hashCode());
 		return result;
 	}
 
@@ -173,10 +44,10 @@ public abstract class PrimitiveValue
 		if (getClass() != obj.getClass())
 			return false;
 		PrimitiveValue other = (PrimitiveValue) obj;
-		if (theValue == null) {
+		if (this.theValue == null) {
 			if (other.theValue != null)
 				return false;
-		} else if (!theValue.equals(other.theValue))
+		} else if (!this.theValue.equals(other.theValue))
 			return false;
 		return true;
 	}

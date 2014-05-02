@@ -1,75 +1,71 @@
 package eu.deustotech.clips;
 
 /**
- * <p>A fact is a list of atomic values that are either referenced positionally (ordered facts) or by name (non‑ordered or template facts).
- * Facts are referred to by index or address.
- * This class represents the latter reference.
+ * <p>
+ * A fact is a list of atomic values that are either referenced positionally
+ * (ordered facts) or by name (non‑ordered or template facts). Facts are
+ * referred to by index or address. This class represents the latter reference.
  * </p>
  * 
- * <p>The printed format of a fact‑address is: <Fact-XXX>.</p>
+ * <p>
+ * The printed format of a fact‑address is: <Fact-XXX>.
+ * </p>
  */
-public class FactAddressValue extends PrimitiveValue
-  {
-   private Environment owner;
+public class FactAddressValue extends PrimitiveValue {
+	private Environment owner;
 
-   /*********************/
-   /* FactAddressValue: */
-   /*********************/
-   public FactAddressValue(
-     long value,
-     Environment env)
-     {
-      super(new Long(value));
-      
-      owner = env;
-     }
+	/*********************/
+	/* FactAddressValue: */
+	/*********************/
+	public FactAddressValue(long value, Environment env) {
+		super(new Long(value));
+		this.owner = env;
+	}
 
-   /*******************/
-   /* getEnvironment: */
-   /*******************/
-   public Environment getEnvironment()
-     { return owner; }
-     
-   /*******************/
-   /* getFactAddress: */
-   /*******************/     
-   public long getFactAddress()
-     { return ((Long) getValue()).longValue(); }
+	/*******************/
+	/* getEnvironment: */
+	/*******************/
+	public Environment getEnvironment() {
+		return this.owner;
+	}
 
-   /****************/
-   /* getFactSlot: */
-   /****************/     
-   public PrimitiveValue getFactSlot(
-     String slotName) throws Exception
-     { return Environment.getFactSlot(this,slotName); }
+	/*******************/
+	/* getFactAddress: */
+	/*******************/
+	public long getFactAddress() {
+		return ((Long) getValue()).longValue();
+	}
 
-   /*****************/
-   /* getFactIndex: */
-   /*****************/     
-   public long getFactIndex()
-     { return Environment.factIndex(this); }
+	/****************/
+	/* getFactSlot: */
+	/****************/
+	public PrimitiveValue getFactSlot(String slotName) {
+		return Environment.getFactSlot(this, slotName);
+	}
 
-   /***********/
-   /* retain: */
-   /***********/
-   public void retain()
-     {
-      owner.incrementFactCount(this);
-     }
+	/*****************/
+	/* getFactIndex: */
+	/*****************/
+	public long getFactIndex() {
+		return Environment.factIndex(this);
+	}
 
-   /************/
-   /* release: */
-   /************/
-   public void release()
-     {
-      owner.decrementFactCount(this);
-     }
-     
-   /*************/
-   /* toString: */
-   /*************/
-   public String toString()
-     {        
-      return "<Fact-" + getFactIndex() + ">";
-     }
-  }
+	/***********/
+	/* retain: */
+	/***********/
+	public void retain() {
+		this.owner.incrementFactCount(this);
+	}
+
+	/************/
+	/* release: */
+	/************/
+	public void release() {
+		this.owner.decrementFactCount(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "<Fact-" + getFactIndex() + ">";
+	}
+}

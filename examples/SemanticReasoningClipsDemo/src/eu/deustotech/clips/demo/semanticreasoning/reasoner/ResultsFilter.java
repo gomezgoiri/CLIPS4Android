@@ -1,7 +1,8 @@
 package eu.deustotech.clips.demo.semanticreasoning.reasoner;
 
-import eu.deustotech.clips.PrimitiveValue;
+import eu.deustotech.clips.CLIPSError;
+import eu.deustotech.clips.MultifieldValue;
 
 public interface ResultsFilter {
-	public boolean isRetained(PrimitiveValue triple) throws Exception;
+	public boolean isRetained(MultifieldValue triple) throws CLIPSError;
 }

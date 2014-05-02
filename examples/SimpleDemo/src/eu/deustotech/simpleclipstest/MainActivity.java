@@ -1,6 +1,5 @@
 package eu.deustotech.simpleclipstest;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,9 +49,7 @@ public class MainActivity extends Activity {
 			test.modifyAFact();
 			test.getAllFacts();
 			test.stop();
-		} catch (FileNotFoundException e1) {
-			Log.d(CLIPSTest.tag, e1.getMessage());
-		} catch (Exception e) {
+		} catch (CLIPSError e) {
 			Log.d(CLIPSTest.tag, e.getMessage());
 		}
 	}
@@ -92,7 +89,7 @@ public class MainActivity extends Activity {
 	private void generateRuleFileInAppFileDir() {
 		FileOutputStream destinationFileStream = null;
 		InputStream assetsOriginFileStream = null;
-		try{
+		try {
 			destinationFileStream = openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
 			assetsOriginFileStream = getAssets().open(FILE_NAME);
 			
@@ -100,13 +97,10 @@ public class MainActivity extends Activity {
 			while((aByte = assetsOriginFileStream.read())!=-1){
 				destinationFileStream.write(aByte);
 			}			
-		}
-		catch (IOException e){
+		} catch (IOException e) {
 			Log.d(CLIPSTest.tag, e.getMessage());
-		}
-		finally{
-			try
-			{
+		} finally {
+			try {
 				assetsOriginFileStream.close();
 				destinationFileStream.close();
 			}
@@ -122,5 +116,4 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
 }

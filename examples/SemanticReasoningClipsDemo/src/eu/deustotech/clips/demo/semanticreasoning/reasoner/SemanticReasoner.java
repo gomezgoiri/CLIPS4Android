@@ -6,7 +6,8 @@ import java.io.PrintStream;
 import android.util.Log;
 import eu.deustotech.clips.CLIPSError;
 import eu.deustotech.clips.Environment;
-import eu.deustotech.clips.PrimitiveValue;
+import eu.deustotech.clips.FactAddressValue;
+import eu.deustotech.clips.MultifieldValue;
 
 /*
  * Sample usage outside this library;
@@ -64,7 +65,7 @@ public class SemanticReasoner {
 		}
 	}
 	
-	private String serializeToCLP(PrimitiveValue triple) throws Exception {
+	private String serializeToCLP(MultifieldValue triple) {
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 		final PrintStream ps = new PrintStream(os);
 		ps.format("(. %s %s %s )\n", triple.get(0), triple.get(1), triple.get(2) );
@@ -79,7 +80,7 @@ public class SemanticReasoner {
 		
 		final String evalStr = "(find-all-facts ((?f .)) TRUE)";
 		try {
-			final PrimitiveValue pv = this.clips.eval(evalStr);
+			final MultifieldValue pv = (MultifieldValue) this.clips.eval(evalStr);
 			//final String evalStr = "(find-all-facts ((?f .)) TRUE)";
 			//Log.d(SemanticReasoner.logLabel, pv.getValue().toString());
 			
@@ -87,12 +88,12 @@ public class SemanticReasoner {
 			
 			//Log.d(SemanticReasoner.logLabel, pvx.getValue().toString());
 			for(int i=0; i< pv.size(); i++) {
-				final PrimitiveValue pv2 = pv.get(i);
+				final FactAddressValue pv2 = (FactAddressValue) pv.get(i);
 				//final String evalStr2 = "(find-all ((?f .)) (eq ?f:id " + pv2.getValue().toString() + ")))";
 				//final PrimitiveValue pv3 = this.clips.eval(evalStr2);
 				//Log.d(SemanticReasoner.logLabel, pv2.getValue().toString());
 				//Log.d(SemanticReasoner.logLabel, pv2.getFactSlot(null).toString());
-				final PrimitiveValue triple = pv2.getFactSlot(null);
+				final MultifieldValue triple = (MultifieldValue) pv2.getFactSlot(null);
 				boolean retain = true;
 				
 				if( rf!=null ) {
@@ -110,8 +111,6 @@ public class SemanticReasoner {
 			}
 		} catch (CLIPSError e) {
 			Log.e(SemanticReasoner.logLabel, "find-all-facts incorrectly evaluated.", e);
-		} catch (Exception e) {
-			Log.e(SemanticReasoner.logLabel, e.getMessage());
 		}
 		return os; //sb.toString();
 	}
@@ -157,14 +156,14 @@ class SubjectFilter implements ResultsFilter {
 	}
 	
 	@Override
-	public boolean isRetained(PrimitiveValue triple) throws Exception {
+	public boolean isRetained(MultifieldValue triple) throws CLIPSError {
 		return triple.get(0).toString().equals( this.subject );
 	}
 }
 
 class ObviousSameAsFilter implements ResultsFilter {
 	@Override
-	public boolean isRetained(PrimitiveValue triple) throws Exception {
+	public boolean isRetained(MultifieldValue triple) throws CLIPSError {
 		if( triple.get(1).toString().equals("owl:sameAs") ) {
 			return !triple.get(0).toString().equals( triple.get(2).toString() );
 		}
@@ -177,7 +176,7 @@ class ObviousSameAsFilter implements ResultsFilter {
 // For example, changing eq-ref to ignore objects which are not URIs
 class IncorrectSubjectFilter implements ResultsFilter {
 	@Override
-	public boolean isRetained(PrimitiveValue triple) throws Exception {
+	public boolean isRetained(MultifieldValue triple) throws CLIPSError {
 		return !triple.get(0).toString().startsWith("\"");
 	}
 }

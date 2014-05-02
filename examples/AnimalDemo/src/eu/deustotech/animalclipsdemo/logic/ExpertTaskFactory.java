@@ -1,5 +1,6 @@
 package eu.deustotech.animalclipsdemo.logic;
 
+import eu.deustotech.clips.CLIPSError;
 import android.util.Log;
 
 public class ExpertTaskFactory {
@@ -23,7 +24,7 @@ public class ExpertTaskFactory {
 	}
 }
 
-abstract class ExpertTask implements Runnable{
+abstract class ExpertTask implements Runnable {
 	final ExpertSystem es;
 	
 	public ExpertTask(ExpertSystem es) {
@@ -34,12 +35,12 @@ abstract class ExpertTask implements Runnable{
 	public void run() {
 		try {
 			executeTask();
-		} catch (Exception e) {
+		} catch (CLIPSError e) {
 			Log.e(ExpertSystem.logLabel, e.getMessage());
 		}
 	}
 	
-	protected abstract void executeTask() throws Exception;
+	protected abstract void executeTask() throws CLIPSError;
 }
 
 class RestartTask extends ExpertTask {
@@ -49,7 +50,7 @@ class RestartTask extends ExpertTask {
 	}
 
 	@Override
-	protected void executeTask() throws Exception {
+	protected void executeTask() throws CLIPSError {
 		this.es.restart();
 	}
 }
@@ -63,7 +64,7 @@ class NextTask extends ExpertTask {
 	}
 	
 	@Override
-	public void executeTask() throws Exception {
+	public void executeTask() throws CLIPSError {
 		this.es.next( stateId );
 	}
 }
@@ -74,7 +75,7 @@ class PreviousTask extends ExpertTask {
 	}
 	
 	@Override
-	public void executeTask() throws Exception {
+	public void executeTask() throws CLIPSError {
 		this.es.previous();
 	}
 }

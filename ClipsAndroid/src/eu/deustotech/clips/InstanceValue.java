@@ -1,22 +1,8 @@
 package eu.deustotech.clips;
 
-public abstract class InstanceValue extends PrimitiveValue
-  {
-   /******************/
-   /* InstanceValue: */
-   /******************/
-   public InstanceValue(
-     String value)
-     {
-      super(value);
-     }
-
-   /******************/
-   /* InstanceValue: */
-   /******************/
-   public InstanceValue(
-     Long value)
-     {
-      super(value);
-     }
-  }
+// Just to model the real types hierarchy
+public abstract class InstanceValue extends PrimitiveValue {
+	public InstanceValue(Object value) {
+		super(value);
+	}
+}
